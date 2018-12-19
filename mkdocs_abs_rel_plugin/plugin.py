@@ -3,8 +3,7 @@ relative to a given path or default doc path."""
 import logging
 from pathlib import Path
 
-from mkdocs import utils
-from mkdocs.config import config_options, Config
+from mkdocs.config import Config
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
 
