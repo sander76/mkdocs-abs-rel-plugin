@@ -45,6 +45,10 @@ def no_link_1():
     return "abc / abc"
 
 @pytest.fixture
+def no_link_2():
+    return "## abc / abc {}"
+
+@pytest.fixture
 def short_link_rel():
     return "[short link rel]: imgs/imgs.png"
 
@@ -86,7 +90,7 @@ def test_short_link_abs(short_link_abs, source_even, source_level_higher):
 
 
 def test_links_source1(
-    abs_link, abs_image, rel_link, abs_link_with_note, no_link, no_link_1
+    abs_link, abs_image, rel_link, abs_link_with_note, no_link, no_link_1,no_link_2
 ):
     source_path = DOCUMENT_FOLDER.joinpath("source.html")
     assert "[abs link](imgs/img.png)" == do_test(abs_link, source_path)
@@ -98,7 +102,7 @@ def test_links_source1(
     )
     assert "[no link](abc" == do_test(no_link, source_path)
     assert "abc / abc" == do_test(no_link_1,source_path)
-
+    assert "## abc / abc {}" == do_test(no_link_2, source_path)
 
 def test_links_source2(
     abs_link, abs_image, rel_link, abs_link_with_note, no_link

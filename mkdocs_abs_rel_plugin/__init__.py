@@ -7,7 +7,7 @@ from pathlib import Path
 LOGGER = logging.getLogger(__name__)
 
 # md_link = re.compile(r"([\s(:]{1})(/[^\n\r)]*)")
-md_link = re.compile(r"(]\()(/[^\n\r)]*)(\))|(]:\s)(/[^\n\r)]*)")
+md_link = re.compile(r"(\[.*]\()(/[^\n\r)]*)(\))|(\[.*]:\s)(/[^\n\r)]*)")
 
 
 def _check_link(link: str, source_file: Path, root_folder: Path):
