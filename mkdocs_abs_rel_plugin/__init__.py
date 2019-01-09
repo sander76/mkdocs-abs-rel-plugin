@@ -6,7 +6,8 @@ from pathlib import Path
 
 LOGGER = logging.getLogger(__name__)
 
-md_link = re.compile(r"([\s(:]{1})(/[^\n\r)]*)")
+# md_link = re.compile(r"([\s(:]{1})(/[^\n\r)]*)")
+md_link = re.compile(r"(]\()(/[^\n\r)]*)(\))|(]:\s)(/[^\n\r)]*)")
 
 
 def _check_link(link: str, source_file: Path, root_folder: Path):
@@ -19,12 +20,22 @@ def _check_link(link: str, source_file: Path, root_folder: Path):
 
 def _to_rel(source_file: Path, root_folder: Path):
     def re_write_link(matchobj):
-        pre = matchobj.group(1)
-        link = matchobj.group(2)
+        group1 = matchobj.group(1)  # front stuff
+        group2 = matchobj.group(2)  # the actual link
+        group3 = matchobj.group(3)  # closing tag
 
-        link = _check_link(link, source_file, root_folder)
+        if group1 and group2 and group3:
 
-        return "{}{}".format(pre, link)
+            link = _check_link(group2, source_file, root_folder)
+
+            return "{}{}{}".format(group1, link, group3)
+
+        group4 = matchobj.group(4)  # front stuff
+        group5 = matchobj.group(5)  # the actual link
+        if group4 and group5:
+            link = _check_link(group5, source_file, root_folder)
+
+            return "{}{}".format(group4, link)
 
     return re_write_link
 
