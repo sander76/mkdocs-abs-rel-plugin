@@ -40,13 +40,16 @@ def outside_link():
 def no_link():
     return "[no link](abc"
 
+
 @pytest.fixture
 def no_link_1():
     return "abc / abc"
 
+
 @pytest.fixture
 def no_link_2():
     return "## abc / abc {}"
+
 
 @pytest.fixture
 def short_link_rel():
@@ -56,6 +59,16 @@ def short_link_rel():
 @pytest.fixture
 def short_link_abs():
     return "[short link abs]: /imgs/imgs.png"
+
+
+@pytest.fixture
+def multiple_links_abs():
+    lines = (
+        "%% %4 %4 %4",
+        "| ![img](/imgs/hmip/menu_groups.png)   | ![img](/imgs/hmip/Screenshot_2018-09-11-10-07-27.png) | ![img](/imgs/hmip/Screenshot_2018-09-11-10-07-44.png) |",
+        "| ++ Select `Groups`      | Select `Shutter group`    | Enter a name of the group                                                                      |",
+    )
+    return "\n".join(lines)
 
 
 @pytest.fixture
@@ -90,7 +103,13 @@ def test_short_link_abs(short_link_abs, source_even, source_level_higher):
 
 
 def test_links_source1(
-    abs_link, abs_image, rel_link, abs_link_with_note, no_link, no_link_1,no_link_2
+    abs_link,
+    abs_image,
+    rel_link,
+    abs_link_with_note,
+    no_link,
+    no_link_1,
+    no_link_2,
 ):
     source_path = DOCUMENT_FOLDER.joinpath("source.html")
     assert "[abs link](imgs/img.png)" == do_test(abs_link, source_path)
@@ -101,8 +120,9 @@ def test_links_source1(
         == '[abs_link_with_note](imgs/img.png "a note")'
     )
     assert "[no link](abc" == do_test(no_link, source_path)
-    assert "abc / abc" == do_test(no_link_1,source_path)
+    assert "abc / abc" == do_test(no_link_1, source_path)
     assert "## abc / abc {}" == do_test(no_link_2, source_path)
+
 
 def test_links_source2(
     abs_link, abs_image, rel_link, abs_link_with_note, no_link
@@ -114,4 +134,32 @@ def test_links_source2(
     assert "[rel link](imgs/img.png)" == do_test(rel_link, source_path)
     assert '[abs_link_with_note](../imgs/img.png "a note")' == do_test(
         abs_link_with_note, source_path
+    )
+
+
+def test_multiple_links():
+    multiple = "\n".join(
+        (
+            "%% %4 %4 %4",
+            "| ![img](/imgs/hmip/menu_groups.png)   | ![img](/imgs/hmip/Screenshot_2018-09-11-10-07-27.png) | ![img](/imgs/hmip/Screenshot_2018-09-11-10-07-44.png) |",
+            "| ++ Select `Groups`      | Select `Shutter group`    | Enter a name of the group                                                                      |",
+        )
+    )
+
+    source_path = DOCUMENT_FOLDER.joinpath("product/source.html")
+
+    rel = _absolute_to_rel(multiple, source_path, DOCUMENT_FOLDER)
+
+    assert (
+        "%% %4 %4 %4\n| ![img](../imgs/hmip/menu_groups.png)   | ![img](../imgs/hmip/Screenshot_2018-09-11-10-07-27.png) | ![img](../imgs/hmip/Screenshot_2018-09-11-10-07-44.png) |\n| ++ Select `Groups`      | Select `Shutter group`    | Enter a name of the group                                                                      |"
+        == rel
+    )
+
+    source_path = DOCUMENT_FOLDER.joinpath("source.html")
+
+    rel = _absolute_to_rel(multiple, source_path, DOCUMENT_FOLDER)
+
+    assert (
+        "%% %4 %4 %4\n| ![img](imgs/hmip/menu_groups.png)   | ![img](imgs/hmip/Screenshot_2018-09-11-10-07-27.png) | ![img](imgs/hmip/Screenshot_2018-09-11-10-07-44.png) |\n| ++ Select `Groups`      | Select `Shutter group`    | Enter a name of the group                                                                      |"
+        == rel
     )

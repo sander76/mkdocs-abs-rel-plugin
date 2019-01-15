@@ -52,7 +52,7 @@ class UploadCommand(Command):
 
 setup(
     name="mkdocs-abs-rel-plugin",
-    version="0.2.3",
+    version="0.2.4",
     packages=["mkdocs_abs_rel_plugin"],
     url="https://github.com/sander76/mkdocs-abs-rel-plugin",
     license="MIT",
